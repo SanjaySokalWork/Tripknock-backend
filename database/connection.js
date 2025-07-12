@@ -1,10 +1,26 @@
 const mysql = require("mysql2")
 
-const connection = mysql.createConnection({
+const development = {
     host: "localhost",
     user: "root",
     password: "password",
-    database: "trip",
+    database: "trip"
+}
+
+const production = {
+    host: "localhost",
+    user: "eazyjkmj_tripknock",
+    password: "eazyjkmj_tripknock",
+    database: "j6l9%M}x-kD&"
+}
+
+const type = production;
+
+const connection = mysql.createConnection({
+    host: type.host,
+    user: type.user,
+    password: type.password,
+    database: type.database,
     dateStrings: true
 })
 
