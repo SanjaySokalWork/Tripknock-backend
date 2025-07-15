@@ -19,6 +19,7 @@ app.use(fileUpload({
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.use("/test", require("./api/test"));
 app.use("/user", require("./api/user"));
 app.use("/image", require("./api/image"));
 app.use("/season", require("./api/season"));
