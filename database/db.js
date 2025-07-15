@@ -3,7 +3,7 @@ const connection = require("../database/connection");
 class Database {
     constructor() {
         this.connection = connection.connection;
-        this.logging = connection.logging;
+        this.logging = connection.logging || (() => {});
     }
 
     async createTable(table, columns) {
@@ -190,8 +190,9 @@ class Database {
             }
 
             this.logging(sql);
-            return new Promise((resolve, reject) => {
-                this.connection.query(sql, (error, data) => {
+            return new Promise(async (resolve, reject) => {
+                const conn = await this.connection;
+                conn.query(sql, (error, data) => {
                     if (error) {
                         console.log(`Failed to check exists in "${table}": `, error);
                         reject(error);
@@ -233,7 +234,7 @@ class Database {
             // Check if column already exists
             const checkSql = `SHOW COLUMNS FROM \`${table}\` LIKE '${columnName}';`;
             const result = await this.query(checkSql);
-            
+
             if (result.length === 0) {
                 // Column doesn't exist, add it
                 const sql = `ALTER TABLE \`${table}\` ADD COLUMN \`${columnName}\` ${columnDefinition};`;
@@ -252,17 +253,24 @@ class Database {
 
     async query(sql, params = []) {
         this.logging(sql);
-        return new Promise((resolve, reject) => {
-            this.connection.query(sql, params, (error, data) => {
-                if (error) {
-                    reject(error);
-                    return error;
-                } else {
-                    resolve(data);
-                    return data;
-                }
-            })
-        });
+        let conn = await this.connection;
+        // Wait until connection is resolved
+        if (!conn) {
+            // Wait for connection to be established
+            await new Promise((resolve) => {
+                const check = () => {
+                    if (conn) resolve();
+                    else setTimeout(check, 50);
+                };
+                check();
+            });
+        }
+        try {
+            const [data] = await conn.query(sql, params);
+            return data;
+        } catch (error) {
+            throw error;
+        }
     }
 }
 
