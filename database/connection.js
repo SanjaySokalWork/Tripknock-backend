@@ -10,8 +10,8 @@ const development = {
 const production = {
     host: "localhost",
     user: "eazyjkmj_tripknock",
-    password: "eazyjkmj_tripknock",
-    database: "j6l9%M}x-kD&"
+    database: "eazyjkmj_tripknock",
+    password: "j6l9%M}x-kD&"
 }
 
 const type = production;
