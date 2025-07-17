@@ -14,7 +14,7 @@ const production = {
     password: "j6l9%M}x-kD&"
 }
 
-const type = development;
+const type = production;
 
 const connection = mysql.createPool({
     host: type.host,
