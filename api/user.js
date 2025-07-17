@@ -17,15 +17,23 @@ router.post("/login", async (req, resp) => {
         const exists = await user.existByEmail(email);
         if (exists) {
             const userData = await user.findByEmail(email);
-            if (userData.password !== password) {
-                return resp.send({
-                    status: false,
-                    message: "Please check your details and try again!",
-                    errorcode: "401"
-                })
-            } else {
-                return resp.send(userData);
+            // console.log(await user.findByEmail(email));
+            if (userData) {
+                if (userData.password !== password) {
+                    return resp.send({
+                        status: false,
+                        message: "Please check your details and try again!",
+                        errorcode: "401"
+                    })
+                } else {
+                    return resp.send(userData);
+                }
             }
+            return resp.send({
+                status: false,
+                message: "Please check your details and try again!",
+                errorcode: "401"
+            })
         } else {
             return resp.send({
                 status: false,
@@ -132,7 +140,7 @@ router.post("/update", async (req, resp) => {
                 let data = {};
                 const user1 = await user.findByEmail(email);
                 let changedFields = [];
-                
+
                 if (user1.name !== name) {
                     data = { ...data, name: name };
                     changedFields.push('name');
@@ -149,11 +157,11 @@ router.post("/update", async (req, resp) => {
                     data = { ...data, password: password };
                     changedFields.push('password');
                 }
-                
+
                 if (Object.keys(data).length === 0) {
                     return resp.send({ status: false, message: "No changes detected. User information is already up to date." });
                 }
-                
+
                 const users = await user.update(data, { email: email });
                 const changedFieldsStr = changedFields.join(', ');
                 return resp.send({ status: true, message: `User "${user1.name}" updated successfully. Changed fields: ${changedFieldsStr}` });

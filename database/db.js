@@ -3,7 +3,7 @@ const connection = require("../database/connection");
 class Database {
     constructor() {
         this.connection = connection.connection;
-        this.logging = connection.logging || (() => {});
+        this.logging = connection.logging || (() => { });
     }
 
     async createTable(table, columns) {
@@ -62,7 +62,7 @@ class Database {
             let sql = `INSERT INTO \`${table}\` (${columns}) VALUES (${placeholders});`;
             let values = Object.values(data);
 
-            return await this.query(sql, values);
+            return (await this.query(sql, values));
         } catch (err) {
             console.log(`Error inserting data into "${table}":`, err);
             return false;
@@ -73,7 +73,7 @@ class Database {
         let sql = `SELECT * FROM \`${table}\` ORDER BY ID DESC;`;
 
         try {
-            return await this.query(sql);
+            return (await this.query(sql));
         } catch (error) {
             console.log(`failed to fetch data from "${table}": `, error);
             return [];
@@ -84,7 +84,7 @@ class Database {
         let sql = `SELECT * FROM \`${table}\` LIMIT 1;`;
 
         try {
-            return await this.query(sql);
+            return (await this.query(sql));
         } catch (error) {
             console.log(`failed to fetch data from "${table}": `, error);
             return [];
@@ -95,7 +95,7 @@ class Database {
         let sql = `SELECT * FROM \`${table}\` ORDER BY ID DESC LIMIT 1;`;
 
         try {
-            return await this.query(sql);
+            return (await this.query(sql));
         } catch (error) {
             console.log(`failed to fetch data from "${table}": `, error);
             return [];
@@ -103,7 +103,7 @@ class Database {
     }
 
     async findFirst(table) {
-        return await this.findOne(table);
+        return (await this.findOne(table));
     }
 
     async findAllWhere(table, where) {
@@ -121,8 +121,9 @@ class Database {
                 }
             }
 
-            const [data] = await this.query(sql);
-            return data;
+            // console.log(this.query(sql))
+
+            return (await this.query(sql));
         } catch (error) {
             console.log(`failed to fetch data from "${table}": `, error);
             return [];
@@ -130,8 +131,7 @@ class Database {
     }
 
     async findWhere(table, where) {
-        const [data] = await this.findAllWhere(table, where);
-        return data;
+        return (await this.findAllWhere(table, where))
     }
 
     async upate(table, values, where) {
@@ -163,7 +163,7 @@ class Database {
             // Combine all values for prepared statement
             const allValues = [...value, ...values2];
 
-            return await this.query(sql, allValues);
+            return (await this.query(sql, allValues));
         } catch (error) {
             console.log(`failed to update data in "${table}": `, error);
             return [];
@@ -171,7 +171,7 @@ class Database {
     }
 
     async update(table, values, where) {
-        return await this.upate(table, values, where);
+        return (await this.upate(table, values, where));
     }
 
     async exists(table, where) {
@@ -189,9 +189,8 @@ class Database {
                 }
             }
             this.logging(sql);
-            const conn = await this.connection;
-            const [data] = await conn.query(sql);
-            if(data.length > 0) return true;
+            const [data] = await this.connection.query(sql);
+            if (data.length > 0) return true;
             return false;
         } catch (error) {
             console.log(`failed to check exists in "${table}": `, error);
@@ -214,7 +213,7 @@ class Database {
                 }
             }
 
-            return await this.query(sql);
+            return (await this.query(sql));
         } catch (error) {
             console.log(`failed to fetch data from "${table}": `, error);
             return [];
@@ -245,10 +244,9 @@ class Database {
 
     async query(sql, params = []) {
         this.logging(sql);
-        const conn = await this.connection;
         try {
-            const [data] = await conn.query(sql, params);
-            return data;
+            const [results] = await this.connection.query(sql, params);
+            return results;
         } catch (error) {
             throw error;
         }
