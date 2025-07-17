@@ -192,7 +192,7 @@ class Database {
             this.logging(sql);
             return new Promise(async (resolve, reject) => {
                 const conn = await this.connection;
-                conn.query(sql, (error, data) => {
+                await conn.query(sql, (error, data) => {
                     if (error) {
                         console.log(`Failed to check exists in "${table}": `, error);
                         reject(error);
