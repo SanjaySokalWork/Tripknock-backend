@@ -121,7 +121,7 @@ class Database {
                 }
             }
 
-            const data = await this.query(sql);
+            const [data] = await this.query(sql);
             return data;
         } catch (error) {
             console.log(`failed to fetch data from "${table}": `, error);
@@ -130,7 +130,7 @@ class Database {
     }
 
     async findWhere(table, where) {
-        const data = await this.findAllWhere(table, where);
+        const [data] = await this.findAllWhere(table, where);
         return data;
     }
 
@@ -191,6 +191,8 @@ class Database {
             this.logging(sql);
             const conn = await this.connection;
             const [data] = await conn.query(sql);
+            if(data.length > 0) return true;
+            return false;
         } catch (error) {
             console.log(`failed to check exists in "${table}": `, error);
             return false;
