@@ -243,18 +243,7 @@ class Database {
 
     async query(sql, params = []) {
         this.logging(sql);
-        let conn = await this.connection;
-        // Wait until connection is resolved
-        if (!conn) {
-            // Wait for connection to be established
-            await new Promise((resolve) => {
-                const check = () => {
-                    if (conn) resolve();
-                    else setTimeout(check, 50);
-                };
-                check();
-            });
-        }
+        const conn = await this.connection;
         try {
             const [data] = await conn.query(sql, params);
             return data;
