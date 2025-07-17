@@ -188,19 +188,9 @@ class Database {
                     sql += `AND \`${keys[i]}\` = '${values[i]}' `;
                 }
             }
-
             this.logging(sql);
-            return new Promise(async (resolve, reject) => {
-                const conn = await this.connection;
-                await conn.query(sql, (error, data) => {
-                    if (error) {
-                        console.log(`Failed to check exists in "${table}": `, error);
-                        reject(error);
-                    } else {
-                        resolve(data.length > 0);
-                    }
-                });
-            });
+            const conn = await this.connection;
+            const [data] = await conn.query(sql);
         } catch (error) {
             console.log(`failed to check exists in "${table}": `, error);
             return false;
