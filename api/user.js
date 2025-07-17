@@ -20,7 +20,8 @@ router.post("/login", async (req, resp) => {
             if (userData.password !== password) {
                 return resp.send({
                     status: false,
-                    message: "Please check your details and try again!"
+                    message: "Please check your details and try again!",
+                    errorcode: "401"
                 })
             } else {
                 return resp.send(userData);
@@ -28,7 +29,8 @@ router.post("/login", async (req, resp) => {
         } else {
             return resp.send({
                 status: false,
-                message: "Please check your details and try again!"
+                message: "Please check your details and try again!",
+                errorcode: "402"
             });
         }
     } catch (error) {
