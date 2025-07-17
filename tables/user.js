@@ -27,16 +27,16 @@ class User {
     }
 
     async existByEmail(email) {
-        return await this.database.exists(this.table, { email });
+        return await this.database.exists(this.table, { email: email });
     }
 
     async findByEmail(email) {
-        const users = await this.database.findWhere(this.table, { email });
+        const users = await this.database.findWhere(this.table, { email: email });
         return users.length > 0 ? users[0] : null;
     }
 
     async findById(id) {
-        const users = await this.database.findWhere(this.table, { id });
+        const users = await this.database.findWhere(this.table, { id: id });
         return users.length > 0 ? users[0] : null;
     }
 
